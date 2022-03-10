@@ -70,20 +70,10 @@ void ADT_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void ADT_Character::MoveForward(float Value)
 {
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = 0.0f;
-	ControlRot.Roll = 0.0f;
-
-	AddMovementInput(ControlRot.Vector(), Value);
+	AddMovementInput(GetActorForwardVector(), Value);
 }
 
 void ADT_Character::MoveRight(float Value)
 {
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = 0.0f;
-	ControlRot.Roll = 0.0f;
-
-	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
-
-	AddMovementInput(RightVector, Value);
+	AddMovementInput(GetActorRightVector(), Value);
 }

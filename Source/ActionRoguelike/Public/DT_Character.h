@@ -14,6 +14,11 @@ class ACTIONROGUELIKE_API ADT_Character : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AActor> ProjectileClass;
+
 public:
 	// Sets default values for this character's properties
 	ADT_Character();
@@ -21,16 +26,18 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComp;
+		USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComp;
+		UCameraComponent* CameraComp;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+	virtual void Jump();
+	void PrimaryAttack();
 
 public:	
 	// Called every frame

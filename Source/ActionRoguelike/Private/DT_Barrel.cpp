@@ -13,29 +13,26 @@ ADT_Barrel::ADT_Barrel()
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetSimulatePhysics(true);
-
 	RootComponent = MeshComp;
 
 	RadialForce = CreateDefaultSubobject<URadialForceComponent>("RadialForce");
 	RadialForce->SetupAttachment(MeshComp);
 
-	RadialForce->ImpulseStrength = 2000.f;
+	RadialForce->Radius = 750.f;
+	RadialForce->ImpulseStrength = 2500.f;
 	RadialForce->bImpulseVelChange = true;
-	RadialForce->Radius = 600.f;
 	RadialForce->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
-// Called when the game starts or when spawned
-void ADT_Barrel::BeginPlay()
+void ADT_Barrel::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
+	Super::PostInitializeComponents();
+
+	MeshComp->OnComponentHit.AddDynamic(this, &ADT_Barrel::OnActorHit);
 }
 
-// Called every frame
-void ADT_Barrel::Tick(float DeltaTime)
+void ADT_Barrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::Tick(DeltaTime);
-
+	RadialForce->FireImpulse();
 }
-

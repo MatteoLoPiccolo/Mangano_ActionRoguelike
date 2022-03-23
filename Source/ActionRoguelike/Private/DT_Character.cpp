@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DT_InteractionComponent.h"
 
 // Sets default values
 ADT_Character::ADT_Character()
@@ -19,6 +20,8 @@ ADT_Character::ADT_Character()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractionComp = CreateDefaultSubobject<UDT_InteractionComponent>("InteractionComp");
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -67,8 +70,9 @@ void ADT_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ADT_Character::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ADT_Character::PrimaryAttack);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ADT_Character::PrimaryInteract);
 }
 
 void ADT_Character::MoveForward(float Value)
@@ -91,12 +95,14 @@ void ADT_Character::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-void ADT_Character::Jump()
+void ADT_Character::PrimaryAttack()
 {
-	Super::Jump();
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ADT_Character::PrimaryAttack_TimeElapsed, 0.2f);
 }
 
-void ADT_Character::PrimaryAttack()
+void ADT_Character::PrimaryAttack_TimeElapsed()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
@@ -106,4 +112,12 @@ void ADT_Character::PrimaryAttack()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
+void ADT_Character::PrimaryInteract()
+{
+	if (InteractionComp)
+	{
+		InteractionComp->PrimaryInteract();
+	}
 }

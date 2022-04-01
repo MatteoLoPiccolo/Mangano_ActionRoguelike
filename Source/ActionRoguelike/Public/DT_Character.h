@@ -26,8 +26,6 @@ protected:
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
-	
-
 public:
 	// Sets default values for this character's properties
 	ADT_Character();
